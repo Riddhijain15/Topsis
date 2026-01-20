@@ -10,10 +10,10 @@ setup(
     long_description_content_type="text/markdown",
     packages=find_packages(),
     install_requires=["pandas", "numpy"],
-    entry_points={
-        "console_scripts": [
-            "topsis=topsis_vandana_123456.topsis:__main__"
-        ]
-    },
+entry_points={
+    'console_scripts': [
+        'topsis=topsis_riddhi_102483079.topsis:main'
+    ]
+},
     python_requires=">=3.7",
 )

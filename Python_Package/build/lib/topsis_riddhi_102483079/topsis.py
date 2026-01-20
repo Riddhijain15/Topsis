@@ -2,7 +2,6 @@ import pandas as pd
 import numpy as np
 import sys
 
-
 def topsis(input_file, weights, impacts, output_file):
     df = pd.read_csv(input_file)
 
@@ -12,9 +11,8 @@ def topsis(input_file, weights, impacts, output_file):
     data = df.iloc[:, 1:].astype(float)
 
     if len(weights) != data.shape[1] or len(impacts) != data.shape[1]:
-        raise ValueError("Weights and impacts must match number of criteria")
+        raise ValueError("Weights and impacts must match criteria count")
 
-    # Normalization
     normalized = data / np.sqrt((data ** 2).sum())
     weighted = normalized * weights
 
@@ -29,7 +27,7 @@ def topsis(input_file, weights, impacts, output_file):
             ideal_best.append(weighted.iloc[:, i].min())
             ideal_worst.append(weighted.iloc[:, i].max())
         else:
-            raise ValueError("Impacts must be '+' or '-'")
+            raise ValueError("Impacts must be + or -")
 
     dist_best = np.sqrt(((weighted - ideal_best) ** 2).sum(axis=1))
     dist_worst = np.sqrt(((weighted - ideal_worst) ** 2).sum(axis=1))
@@ -41,8 +39,7 @@ def topsis(input_file, weights, impacts, output_file):
 
     df.to_csv(output_file, index=False)
 
-
-def main():
+if __name__ == "__main__":
     if len(sys.argv) != 5:
         print("Usage: topsis <input_file> <weights> <impacts> <output_file>")
         sys.exit(1)
@@ -54,8 +51,3 @@ def main():
 
     topsis(input_file, weights, impacts, output_file)
     print("TOPSIS calculation completed.")
-
-
-if __name__ == "__main__":
-    main()
-
