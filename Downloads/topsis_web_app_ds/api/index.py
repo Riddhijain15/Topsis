@@ -5,13 +5,10 @@ import os
 import smtplib
 from email.message import EmailMessage
 
-# ✅ Ensure required folders exist
-os.makedirs("uploads", exist_ok=True)
-os.makedirs("results", exist_ok=True)
-
+# Create Flask app
 app = Flask(__name__)
 
-
+# ---------------- TOPSIS LOGIC ----------------
 def run_topsis(input_file, weights, impacts):
     df = pd.read_csv(input_file)
     data = df.iloc[:, 1:].astype(float)
@@ -41,6 +38,7 @@ def run_topsis(input_file, weights, impacts):
     return df
 
 
+# ---------------- OPTIONAL EMAIL ----------------
 def send_email(receiver_email, content_csv):
     sender_email = os.environ.get("EMAIL_USER")
     sender_password = os.environ.get("EMAIL_PASS")
@@ -66,6 +64,7 @@ def send_email(receiver_email, content_csv):
         server.send_message(msg)
 
 
+# ---------------- ROUTES ----------------
 @app.route("/", methods=["GET", "POST"])
 def index():
     if request.method == "POST":
@@ -80,13 +79,13 @@ def index():
             if file.filename == "":
                 return "No file selected", 400
 
-            # ✅ Correct file saving (Windows-safe)
-            filename = file.filename
-            input_path = os.path.join("uploads", filename)
+            # ✅ Vercel allows writing ONLY to /tmp
+            input_path = os.path.join("/tmp", file.filename)
             file.save(input_path)
 
             result_df = run_topsis(input_path, weights, impacts)
 
+            # Optional email (will safely fail on Vercel)
             if send_email_flag and email:
                 try:
                     send_email(email, result_df.to_csv(index=False))
@@ -104,5 +103,8 @@ def index():
     return render_template("index.html")
 
 
-if __name__ == "__main__":
-    app.run(debug=True)
+# ⚠️ IMPORTANT FOR VERCEL
+# Do NOT use app.run()
+# Just expose the app object
+
+
