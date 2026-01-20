@@ -82,4 +82,4 @@ The web interface is designed to be simple and user-friendly, enabling users to 
 
 ## 👩‍💻 Author
 
-**Vandana**
+**Riddhi**
