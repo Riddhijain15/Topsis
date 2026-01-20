@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>TOPSIS Web Application</title>
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #05716c, #034d47);
+            min-height: 100vh;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background: #ffffff;
+            width: 420px;
+            padding: 30px 35px;
+            border-radius: 14px;
+            box-shadow: 0 20px 40px rgba(5, 113, 108, 0.25);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 25px;
+            color: #05716c;
+            font-weight: 700;
+            font-size: 28px;
+            letter-spacing: -0.5px;
+        }
+
+        label {
+            font-weight: 600;
+            display: block;
+            margin-top: 15px;
+            margin-bottom: 6px;
+            color: #034d47;
+            font-size: 14px;
+        }
+
+        input[type="file"],
+        input[type="text"],
+        input[type="email"] {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 8px;
+            border: 2px solid #e0e0e0;
+            font-size: 14px;
+            font-family: 'Poppins', sans-serif;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        input:focus {
+            border-color: #05716c;
+        }
+
+        .hint {
+            font-size: 12px;
+            color: #777;
+            margin-top: 4px;
+            font-weight: 300;
+        }
+
+        .checkbox-container {
+            margin-top: 18px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            color: #034d47;
+        }
+
+        button {
+            margin-top: 25px;
+            width: 100%;
+            padding: 14px 20px;
+            background: #05716c;
+            color: #ffffff;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            font-family: 'Poppins', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(5, 113, 108, 0.3);
+            letter-spacing: 0.3px;
+            text-transform: uppercase;
+        }
+
+        button:hover {
+            background: #034d47;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(5, 113, 108, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 8px rgba(5, 113, 108, 0.3);
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 18px;
+            font-size: 12px;
+            color: #666;
+            font-weight: 300;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>TOPSIS Web Application</h1>
+
+    <form method="POST" enctype="multipart/form-data">
+
+        <label>Upload CSV File</label>
+        <input type="file" name="file" required>
+        <div class="hint">CSV file with alternatives and criteria</div>
+
+        <label>Weights (comma separated)</label>
+        <input type="text" name="weights" placeholder="e.g. 1,1,1,1,1" required>
+
+        <label>Impacts (comma separated)</label>
+        <input type="text" name="impacts" placeholder="e.g. +,+,-,+,+" required>
+
+        <!-- OPTIONAL EMAIL CHECKBOX -->
+        <div class="checkbox-container">
+            <input type="checkbox" id="send_email" name="send_email">
+            <label for="send_email">Send results to email (optional)</label>
+        </div>
+
+        <!-- EMAIL FIELD (HIDDEN BY DEFAULT) -->
+        <div id="email_box" style="display:none;">
+            <label>Email Address</label>
+            <input type="email" name="email" placeholder="example@gmail.com">
+            <div class="hint">Results will be sent to this email address</div>
+        </div>
+
+        <button type="submit">Run TOPSIS</button>
+    </form>
+</div>
+
+<script>
+    const checkbox = document.getElementById("send_email");
+    const emailBox = document.getElementById("email_box");
+
+    checkbox.addEventListener("change", function () {
+        emailBox.style.display = this.checked ? "block" : "none";
+    });
+</script>
+
+</body>
+</html>
