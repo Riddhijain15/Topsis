@@ -6,7 +6,10 @@ import smtplib
 from email.message import EmailMessage
 
 # Create Flask app
-app = Flask(__name__)
+app = Flask(
+    _name_,
+    template_folder="../templates"
+)
 
 # ---------------- TOPSIS LOGIC ----------------
 def run_topsis(input_file, weights, impacts):
