@@ -5,6 +5,7 @@ import os
 import smtplib
 from email.message import EmailMessage
 from dotenv import load_dotenv
+import tempfile
 
 # ✅ Ensure required folders exist
 
@@ -99,9 +100,8 @@ def index():
             if file.filename == "":
                 return "No file selected", 400
 
-            # Ensure uploads directory exists and save file there
-            upload_dir = os.path.join(BASE_DIR, "uploads")
-            os.makedirs(upload_dir, exist_ok=True)
+            # Save uploaded file to system temp directory (serverless-safe)
+            upload_dir = tempfile.gettempdir()
             input_path = os.path.join(upload_dir, file.filename)
             file.save(input_path)
 
