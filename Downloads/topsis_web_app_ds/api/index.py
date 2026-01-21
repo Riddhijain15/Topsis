@@ -4,14 +4,33 @@ import numpy as np
 import os
 import smtplib
 from email.message import EmailMessage
+from dotenv import load_dotenv
 
-# Create Flask app
+# ✅ Ensure required folders exist
+
+import os
+from flask import Flask
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+# Load environment variables from project .env
+load_dotenv(os.path.join(BASE_DIR, ".env"))
+
+# Startup debug: report whether email credentials are present (don't print the password)
+email_user = os.environ.get("EMAIL_USER")
+email_pass = os.environ.get("EMAIL_PASS")
+print(f"EMAIL_USER set: {bool(email_user)}")
+print(f"EMAIL_PASS set: {bool(email_pass)}")
+
 app = Flask(
-    _name_,
-    template_folder="../templates"
+    __name__,
+    template_folder=os.path.join(BASE_DIR, "templates"),
+    static_folder=os.path.join(BASE_DIR, "static")
 )
 
-# ---------------- TOPSIS LOGIC ----------------
+
+
+
 def run_topsis(input_file, weights, impacts):
     df = pd.read_csv(input_file)
     data = df.iloc[:, 1:].astype(float)
@@ -41,7 +60,6 @@ def run_topsis(input_file, weights, impacts):
     return df
 
 
-# ---------------- OPTIONAL EMAIL ----------------
 def send_email(receiver_email, content_csv):
     sender_email = os.environ.get("EMAIL_USER")
     sender_password = os.environ.get("EMAIL_PASS")
@@ -67,7 +85,6 @@ def send_email(receiver_email, content_csv):
         server.send_message(msg)
 
 
-# ---------------- ROUTES ----------------
 @app.route("/", methods=["GET", "POST"])
 def index():
     if request.method == "POST":
@@ -82,13 +99,15 @@ def index():
             if file.filename == "":
                 return "No file selected", 400
 
-            # ✅ Vercel allows writing ONLY to /tmp
-            input_path = os.path.join("/tmp", file.filename)
+            # Ensure uploads directory exists and save file there
+            upload_dir = os.path.join(BASE_DIR, "uploads")
+            os.makedirs(upload_dir, exist_ok=True)
+            input_path = os.path.join(upload_dir, file.filename)
             file.save(input_path)
+
 
             result_df = run_topsis(input_path, weights, impacts)
 
-            # Optional email (will safely fail on Vercel)
             if send_email_flag and email:
                 try:
                     send_email(email, result_df.to_csv(index=False))
@@ -106,8 +125,5 @@ def index():
     return render_template("index.html")
 
 
-# ⚠️ IMPORTANT FOR VERCEL
-# Do NOT use app.run()
-# Just expose the app object
-
-
+if __name__ == "__main__":
+    app.run(host="127.0.0.1", port=5000, debug=True)
